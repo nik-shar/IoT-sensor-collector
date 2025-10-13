@@ -99,3 +99,17 @@ flowchart TD
 | **GET** | /data/{sensor_id} | Retrieve data for one sensor |
 | **POST** | /register_sensor | (Optional)Register a new sensor |
 </div>
+
+## 🧱 The Minimal MVP
+
+### 1. Recieve a POST request from a device(/collect)
+### 2. Save data in a simple database(SQLite)
+### 3. Retrive the data(/data) 
+
+
+## 🧩 Tech Stack
+### --> **Backend** : FastAPI
+### --> **Database** : SQLite
+### --> **Language** : Python
+### --> **Data Format** : JSON
+### --> **Deployment** : Docker container

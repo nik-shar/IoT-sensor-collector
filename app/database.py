@@ -1,0 +1,49 @@
+# app/database.py
+import sqlite3
+
+DATABASE_NAME = "iot_data.db"
+
+def get_connection():
+    conn = sqlite3.connect(DATABASE_NAME)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def create_tables():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    # Sensors table
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS sensors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        type TEXT NOT NULL,
+        location TEXT
+    )
+    ''')
+
+    # Sensor data table (used in /submit_data)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS sensor_data (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sensor_id INTEGER NOT NULL,
+        data_type TEXT NOT NULL,
+        value REAL NOT NULL,
+        timestamp TEXT NOT NULL,
+        FOREIGN KEY (sensor_id) REFERENCES sensors(id)
+    )
+    ''')
+
+    # Legacy readings table (optional, can remove later)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS sensor_readings (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        sensor_id INTEGER NOT NULL,
+        value REAL NOT NULL,
+        timestamp TEXT NOT NULL,
+        FOREIGN KEY (sensor_id) REFERENCES sensors(id)
+    )
+    ''')
+
+    conn.commit()
+    conn.close()
