@@ -4,6 +4,8 @@ from contextlib import asynccontextmanager
 from typing import List, Optional
 from app.database import get_connection, create_tables
 from app.models import SensorRegister, SensorData, SensorDataResponse
+from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
 
 # Lifespan event to replace deprecated @app.on_event("startup")
 @asynccontextmanager
@@ -13,6 +15,14 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="IoT Sensor Collector API", lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # both work for React dev
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],  # was `allow_header`
+)
 
 # Root endpoint
 @app.get("/")
@@ -102,4 +112,27 @@ def get_sensor_data(
         for row in rows
     ]
 
+    return results
+
+
+@app.get("/latest_data")
+def get_all_data(sensor_id: Optional[int] = None):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    if sensor_id:
+        cursor.execute(
+            "SELECT value, timestamp FROM sensor_data WHERE sensor_id = ? ORDER BY timestamp ASC",
+            (sensor_id,),
+        )
+    else:
+        cursor.execute("SELECT value, timestamp FROM sensor_data ORDER BY timestamp ASC")
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    if not rows:
+        return []
+
+    results = [{"value": row[0], "timestamp": row[1]} for row in rows]
     return results
