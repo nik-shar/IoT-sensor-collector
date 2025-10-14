@@ -116,23 +116,26 @@ def get_sensor_data(
 
 
 @app.get("/latest_data")
-def get_all_data(sensor_id: Optional[int] = None):
+def get_all_data():
     conn = get_connection()
     cursor = conn.cursor()
 
-    if sensor_id:
-        cursor.execute(
-            "SELECT value, timestamp FROM sensor_data WHERE sensor_id = ? ORDER BY timestamp ASC",
-            (sensor_id,),
-        )
-    else:
-        cursor.execute("SELECT value, timestamp FROM sensor_data ORDER BY timestamp ASC")
-
+    # Fetch all data sorted by timestamp
+    cursor.execute("""
+        SELECT sensor_id, value, timestamp
+        FROM sensor_data
+        ORDER BY sensor_id ASC, timestamp ASC
+    """)
     rows = cursor.fetchall()
     conn.close()
 
     if not rows:
-        return []
-
-    results = [{"value": row[0], "timestamp": row[1]} for row in rows]
-    return results
+        return {}
+    
+    grouped = {}
+    for sensor_id, value, timestamp in rows : 
+        grouped.setdefault(sensor_id, []).append({
+            "value" : value,
+            "timestamp" : timestamp
+        })
+    return grouped
