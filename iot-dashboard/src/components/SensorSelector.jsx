@@ -2,7 +2,7 @@ import React from "react";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
 const SensorSelector = ({ sensors, selectedSensor, onChange }) => (
-  <FormControl fullWidth style={{ marginBottom: 20 }}>
+  <FormControl fullWidth sx={{ marginBottom: 2 }}>
     <InputLabel>Select Sensor</InputLabel>
     <Select value={selectedSensor || ""} onChange={(e) => onChange(e.target.value)}>
       {sensors.map((sensor) => (

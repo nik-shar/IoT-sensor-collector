@@ -8,6 +8,10 @@ from pydantic import BaseModel
 from app.database import get_connection, create_tables
 from app.models import SensorRegister, SensorData, SensorDataResponse
 
+# import psycopg2
+# from dotenv import lo
+
+
 # Lifespan startup event
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -184,7 +188,7 @@ def delete_data_range(
     conn = get_connection()
     cursor = conn.cursor() 
 
-    cursor.execute("SELECT if FROM sensors WHERE id = ?",(sensor_id,))
+    cursor.execute("SELECT id FROM sensors WHERE id = ?",(sensor_id,))
     if not cursor.fetchone():
         conn.close()
         raise HTTPException(status_code=404,detail="Sensor not found")
@@ -235,4 +239,21 @@ def delete_sensor(sensor_id : int):
         "status" : "success",
         "deleted_data_points" : deleted_data_points,
         "message":f"Sensor '{sensor[1]}'(ID : {sensor_id}) and its {deleted_data_points} data points deleted successfully."
+    }
+
+@app.get("/system_status")
+def system_status():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) FROM sensors")
+    sensors_count = cursor.fetchone()[0]
+    cursor.execute("SELECT COUNT(*) FROM sensor_data")
+    data_count = cursor.fetchone()[0]
+    conn.close()
+
+    return {
+        "status": "ok",
+        "sensors": sensors_count,
+        "datapoints": data_count,
+        "uptime": datetime.now().isoformat()
     }
