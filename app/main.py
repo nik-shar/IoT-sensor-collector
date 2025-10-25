@@ -61,15 +61,31 @@ def set_led_state(state: dict):
 def register_sensor(sensor: SensorRegister):
     conn = get_connection()
     cursor = conn.cursor()
+
+    # Get all existing sensor IDs
+    cursor.execute("SELECT id FROM sensors ORDER BY id ASC")
+    existing_ids = [row[0] for row in cursor.fetchall()]
+
+    # Find the smallest available ID in range 1–100
+    new_id = None
+    for i in range(1, 101):
+        if i not in existing_ids:
+            new_id = i
+            break
+
+    if new_id is None:
+        conn.close()
+        raise HTTPException(status_code=400, detail="No available sensor IDs (1–100 limit reached)")
+
+    # Insert with custom ID
     cursor.execute(
-        "INSERT INTO sensors (name, type, location) VALUES (%s, %s, %s)",
-        (sensor.name, sensor.type, sensor.location),
+        "INSERT INTO sensors (id, name, type, location) VALUES (%s, %s, %s, %s)",
+        (new_id, sensor.name, sensor.type, sensor.location),
     )
     conn.commit()
-    cursor.execute("SELECT currval(pg_get_serial_sequence('sensors', 'id'))")
-    sensor_id = cursor.fetchone()[0]
     conn.close()
-    return {"message": "Sensor registered successfully", "sensor_id": sensor_id}
+
+    return {"message": "Sensor registered successfully", "sensor_id": new_id}
 
 
 # ✅ B: Submit sensor data
