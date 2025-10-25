@@ -22,6 +22,8 @@ async def lifespan(app: FastAPI):
 # Create ONE FastAPI app
 app = FastAPI(title="IoT Sensor Collector API", lifespan=lifespan)
 
+led_state = {"led" : "off"}
+
 # CORS
 app.add_middleware(
     CORSMiddleware,
@@ -46,6 +48,15 @@ class DeleteDataRequest(BaseModel):
 @app.get("/")
 def home():
     return {"message": "IoT Sensor Collector API is running!"}
+
+@app.get("/device/led")
+def get_led_state() :
+    return led_state
+
+@app.post("/device/led")
+def set_led_state(state: dict):
+    led_state["led"] = state.get("led","off")
+    return led_state
 
 # ✅ A: Register a sensor
 @app.post("/register_sensor")
