@@ -21,7 +21,7 @@ const AddSensorForm = ({ onSensorAdded }) => {
     setMessage("");
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/register_sensor", formData);
+      const res = await axios.post("https://iot-sensor-collector.onrender.com/register_sensor", formData);
       setMessage(res.data.message);
       setFormData({ name: "", type: "", location: "" });
       onSensorAdded(); // refresh sensor list in parent

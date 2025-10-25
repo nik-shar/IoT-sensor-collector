@@ -7,7 +7,7 @@ const SystemStatus = () => {
 
   const loadStatus = async () => {
     try {
-      const res = await axios.get("http://127.0.0.1:8000/system_status");
+      const res = await axios.get("https://iot-sensor-collector.onrender.com/system_status");
       setStatus(res.data);
     } catch {
       setStatus({ status: "error" });

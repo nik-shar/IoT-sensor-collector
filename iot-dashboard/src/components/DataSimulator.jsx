@@ -27,7 +27,7 @@ const DataSimulator = ({ sensors, onDataSent }) => {
     setMessage("");
 
     try {
-      const res = await axios.post("http://127.0.0.1:8000/submit_data", {
+      const res = await axios.post("https://iot-sensor-collector.onrender.com/submit_data", {
         ...formData,
         value: parseFloat(formData.value),
         timestamp: new Date().toISOString(),

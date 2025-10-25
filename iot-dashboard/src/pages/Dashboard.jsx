@@ -115,7 +115,7 @@ const Dashboard = () => {
   const handleConfirmDeleteRange = async () => {
     setOpenConfirm(false);
     try {
-      await axios.delete("http://127.0.0.1:8000/delete_data_range", {
+      await axios.delete("https://iot-sensor-collector.onrender.com/delete_data_range", {
         params: {
           sensor_id: selectedSensor,
           start: startDate.toISOString(),
@@ -141,7 +141,7 @@ const Dashboard = () => {
   const handleConfirmDeleteSensor = async () => {
     setOpenDeleteSensor(false);
     try {
-      await axios.delete(`http://127.0.0.1:8000/delete_sensor/${selectedSensor}`);
+      await axios.delete(`https://iot-sensor-collector.onrender.com/delete_sensor/${selectedSensor}`);
       alert("🗑️ Sensor deleted successfully!");
       setSelectedSensor(null);
       setData([]);

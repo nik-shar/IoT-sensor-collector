@@ -17,7 +17,7 @@ const SensorTable = ({ data, selectedSensor, onDataDeleted }) => {
   const handleDeleteSelected = async () => {
     if (!selectedSensor || selectedIds.length === 0) return;
     try {
-      await axios.delete("http://127.0.0.1:8000/delete_data", {
+      await axios.delete("https://iot-sensor-collector.onrender.com/delete_data", {
         data: { sensor_id: selectedSensor, data_ids: selectedIds },
       });
       onDataDeleted();

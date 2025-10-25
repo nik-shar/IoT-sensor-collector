@@ -8,7 +8,7 @@ export default defineConfig({
     allowedHosts: [
       'localhost',
       '127.0.0.1',
-      'nikhildashboard18688.loca.lt'  // 👈 add your localtunnel host here
+      'https://iot-sensor-collector.onrender.com'  // 👈 add your localtunnel host here
     ],
     host: '0.0.0.0', // 👈 makes Vite reachable from your network/tunnel
     port: 5173

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: "http://iot-sensor-collector.onrender.com",
 });
 
 export const getSensors = () => API.get("/get_sensors");
