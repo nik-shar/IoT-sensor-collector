@@ -1,9 +1,7 @@
 # app/database.py
-import sqlite3
 import psycopg2
 import os 
 
-DATABASE_NAME = "iot_data.db"
 DATABASE_URL = os.getenv("DATABASE_URL","postgresql://iot_user:0DOksFEqSEUOInctc327xW2jv65xtoeH@dpg-d3u6ge8dl3ps73etc8r0-a/iot_sensor_db_koe7")
 
 def get_connection():
