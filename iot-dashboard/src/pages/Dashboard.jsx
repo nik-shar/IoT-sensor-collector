@@ -6,6 +6,7 @@ import SensorSelector from "../components/SensorSelector";
 import SensorGraph from "../components/SensorGraph";
 import SensorTable from "../components/SensorTable";
 import SystemStatus from "../components/SystemStatus";
+import CollectionControl from "../components/CollectionControl"
 import axios from "axios";
 import {
   Switch,
@@ -213,6 +214,7 @@ const Dashboard = () => {
     <div style={{ padding: 20 }}>
       <h2>📡 IoT Sensor Dashboard</h2>
       <SystemStatus />
+      <CollectionControl />
       <AddSensorForm onSensorAdded={loadSensors} />
       <DataSimulator
         sensors={sensors}

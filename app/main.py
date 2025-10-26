@@ -8,6 +8,10 @@ from pydantic import BaseModel
 from app.database import get_connection, create_tables
 from app.models import SensorRegister, SensorData, SensorDataResponse
 
+data_collection_state = {
+    "enabled" : True, 
+    "interval" : 5
+}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -173,6 +177,41 @@ def get_sensors():
     sensors = cursor.fetchall()
     conn.close()
     return [{"id": s[0], "name": s[1], "type": s[2], "location": s[3]} for s in sensors]
+
+@app.get("/collection_status")
+def get_collection_status() : 
+    """Get the current collection state and frequancy."""
+    return data_collection_state
+
+@app.post("/collection_control")
+def set_collection_control(state : dict) :
+    """
+    Control the ESP32 sensing frequancy and enabled/disabled collection.
+    Example body : 
+    {
+        "enabled" : True,
+        "interval" : 10
+    }
+    """
+    enabled = state.get("enabled") 
+    interval = state.get("interval")
+
+    if enabled is not None : 
+        data_collection_state["enabled"] = bool(enabled)
+    if interval is not None : 
+        try : 
+            interval = int(interval)
+            if interval < 1 : 
+                raise ValueError
+            data_collection_state["interval"] = interval
+        except ValueError : 
+            raise HTTPException(status_code=400,detail="Interval must be a positive integer")
+    
+    return {
+        "status" : "success",
+        "enabled" : data_collection_state["enabled"],
+        "interval" : data_collection_state["interval"]
+    }
 
 
 # ✅ F: Send command
